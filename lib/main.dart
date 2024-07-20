@@ -7,7 +7,7 @@ import 'package:vpn_apk/features/auth/view/pages/flash_screen_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  // final container = ProviderContainer();
+  // final container = ProviderContainer(); 
   // await container.read(authViewmodelProvider.notifier).init();
   // await container.read(authViewmodelProvider.notifier).getData();
   // if (kIsWeb) {
