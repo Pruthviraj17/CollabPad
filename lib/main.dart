@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vpn_apk/core/theme/theme.dart';
 import 'package:vpn_apk/features/auth/view/pages/flash_screen_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: ".env");
   // final container = ProviderContainer();
   // await container.read(authViewmodelProvider.notifier).init();
   // await container.read(authViewmodelProvider.notifier).getData();
@@ -34,10 +35,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'CollabPad',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkThemeMode,
-      home: const FlashScreenPage(),
-    );
+        title: 'CollabPad',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.darkThemeMode,
+        home: const FlashScreenPage());
   }
 }

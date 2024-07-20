@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:vpn_apk/core/models/room_model.dart';
+import 'package:vpn_apk/core/providers/room_model_notifier.dart';
 import 'package:vpn_apk/core/utils/screen_size.dart';
 import 'package:vpn_apk/core/utils/show_custom_snackbar.dart';
 import 'package:vpn_apk/core/view/animations/page_navigation_animation.dart';
-import 'package:vpn_apk/core/view/components/custom_loader.dart';
+import 'package:vpn_apk/features/auth/repositories/auth_remote_repository.dart';
 import 'package:vpn_apk/features/auth/view/widgets/auth_button.dart';
 import 'package:vpn_apk/core/view/components/custom_text_widget.dart';
 import 'package:vpn_apk/core/view/components/custom_text_form_field.dart';
 import 'package:vpn_apk/core/constants/text_styles.dart';
 import 'package:vpn_apk/core/theme/app_pallate.dart';
-import 'package:vpn_apk/features/auth/viewmodel/auth_viewmodel.dart';
-import 'package:vpn_apk/features/auth/viewmodel/watch_auth_screen.dart';
 import 'package:vpn_apk/features/home/view/pages/dashboard_page.dart';
 
 class JoinRoomWidget extends ConsumerStatefulWidget {
@@ -29,6 +30,46 @@ class _LoginFormWidgetState extends ConsumerState<JoinRoomWidget> {
     _roomIdController.dispose();
     _roomPassController.dispose();
     super.dispose();
+  }
+
+  void joinRoom() async {
+    final res = await ref.read(authRemoteRepositoryProvider).joinRoom(
+          roomId: _roomIdController.text,
+          password: _roomPassController.text,
+        );
+    if (mounted) {
+      final val = switch (res) {
+        Left(value: final l) => _showMessage(context, l.message),
+        Right(value: final r) => {
+            if (r.success!)
+              {
+                _navigateToDashboard(r),
+              }
+            else
+              {
+                _showMessage(context, r.message!),
+              }
+          },
+      };
+    }
+  }
+
+  void _navigateToDashboard(RoomModel roomModel) {
+    ref.read(codeStateProvider.notifier).state = roomModel.code ?? "";
+    ref.read(roomModelNotifierProvider.notifier).addRoom(roomModel);
+    if (mounted) {
+      Navigator.of(context).pushReplacement(
+        PageNavigationAnimation(
+          page: const DashboardPage(),
+        ),
+      );
+    }
+  }
+
+  void _showMessage(BuildContext context, String message) {
+    if (mounted) {
+      showSnackBar(context: context, content: message);
+    }
   }
 
   @override
@@ -63,13 +104,7 @@ class _LoginFormWidgetState extends ConsumerState<JoinRoomWidget> {
               height: ScreenSize.height(context) * 0.05,
             ),
             AuthButton(
-              onPressed: () async {
-                Navigator.of(context).pushReplacement(
-                  PageNavigationAnimation(
-                    page: const DashboardPage(),
-                  ),
-                );
-              },
+              onPressed: joinRoom,
               child: const CustomTextWidget(
                 text: "JOIN ROOM",
                 color: Pallate.whiteColor,

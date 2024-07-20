@@ -22,9 +22,9 @@ class AuthPage extends ConsumerWidget {
       body: BgGradientWidget(
         child: Row(
           children: [
-            Center(
-              child: Flexible(
-                fit: FlexFit.tight,
+            Flexible(
+              fit: FlexFit.tight,
+              child: Center(
                 child: Hero(
                   tag: "collab_animation",
                   child: Lottie.asset(

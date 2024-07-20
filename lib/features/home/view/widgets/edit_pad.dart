@@ -1,23 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vpn_apk/core/constants/text_styles.dart';
+import 'package:vpn_apk/core/providers/room_model_notifier.dart';
 import 'package:vpn_apk/core/theme/app_pallate.dart';
 import 'package:flutter_highlight/themes/monokai-sublime.dart';
+import 'package:vpn_apk/features/auth/repositories/auth_remote_repository.dart';
 
-class EditPad extends StatefulWidget {
+class EditPad extends ConsumerStatefulWidget {
   const EditPad({
     super.key,
   });
 
   @override
-  State<EditPad> createState() => _EditPadState();
+  ConsumerState<EditPad> createState() => _EditPadState();
 }
 
-class _EditPadState extends State<EditPad> {
-  final _codeFieldController = CodeController(
-    text: "// Write here ",
-    namedSectionParser: const BracketsStartEndNamedSectionParser(),
-  );
+final _codeFieldController = CodeController();
+
+class _EditPadState extends ConsumerState<EditPad> {
+  @override
+  void initState() {
+    _codeFieldController.popupController.enabled = true;
+    ref.read(authRemoteRepositoryProvider).onCodeChange(ref);
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -27,6 +34,10 @@ class _EditPadState extends State<EditPad> {
 
   @override
   Widget build(BuildContext context) {
+    final code = ref.watch(codeStateProvider);
+    _codeFieldController.text = code;
+    final roomModel = ref.watch(roomModelNotifierProvider);
+
     return Align(
       alignment: Alignment.topLeft,
       child: Padding(
@@ -36,23 +47,33 @@ class _EditPadState extends State<EditPad> {
           data: CodeThemeData(
             styles: monokaiSublimeTheme,
           ),
-          child: SingleChildScrollView(
-            child: CodeField(
-              controller: _codeFieldController,
-              maxLines: null,
-              textSelectionTheme: const TextSelectionThemeData(
-                selectionColor: Pallate.textFadeColor,
-              ),
-              filledColor: Pallate.transparentColor,
-              filled: true,
-              background: Pallate.transparentColor,
-              cursorColor: Pallate.textFadeColor,
-              textStyle: const TextStyle(
-                fontSize: FontSize.semiMedium,
-                color: Pallate.whiteColor,
-                fontWeight: FontWeights.thinWeight,
-              ),
-            ),
+          child: Consumer(
+            builder: (context, ref, child) {
+              return SingleChildScrollView(
+                child: CodeField(
+                  controller: _codeFieldController,
+                  onChanged: (codeChange) async {
+                    ref.read(authRemoteRepositoryProvider).emitCodeChange(
+                          roomId: roomModel!.roomId,
+                          code: codeChange,
+                        );
+                  },
+                  maxLines: null,
+                  textSelectionTheme: const TextSelectionThemeData(
+                    selectionColor: Pallate.textFadeColor,
+                  ),
+                  filledColor: Pallate.transparentColor,
+                  filled: true,
+                  background: Pallate.transparentColor,
+                  cursorColor: Pallate.textFadeColor,
+                  textStyle: const TextStyle(
+                    fontSize: FontSize.semiMedium,
+                    color: Pallate.whiteColor,
+                    fontWeight: FontWeights.thinWeight,
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),

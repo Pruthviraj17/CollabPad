@@ -1,12 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:uuid/uuid.dart';
-
 import 'package:vpn_apk/core/failure/app_failure.dart';
-
+import 'package:socket_io_client/socket_io_client.dart' as io;
+import 'package:vpn_apk/core/models/room_model.dart';
 part 'auth_remote_repository.g.dart';
 
 @riverpod
@@ -14,41 +16,149 @@ AuthRemoteRepository authRemoteRepository(AuthRemoteRepositoryRef ref) {
   return AuthRemoteRepository();
 }
 
+final codeStateProvider = StateProvider<String>((ref) => '//write here');
+
 class AuthRemoteRepository {
-  Future<Either<AppFailure, String>> registerUser({
-    required String name,
-    required String email,
-    required String password,
-  }) async {
-    try {
-      final response = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
+  late io.Socket socket;
+  final _afterJoinStreamController = StreamController<ActiveUser>.broadcast();
+  final _afterDisconnetStreamController = StreamController<String>.broadcast();
 
-      String uid = const Uuid().v4();
-      final docRef = FirebaseFirestore.instance.collection("users").doc(uid);
-      docRef.set({'name': name});
+  // Static instance for singleton pattern
+  static final AuthRemoteRepository _instance =
+      AuthRemoteRepository._internal();
 
-      debugPrint(response.toString());
-
-      return const Right("Successfully registered user");
-    } catch (e) {
-      return Left(AppFailure(e.toString()));
-    }
+  // Private constructor
+  AuthRemoteRepository._internal() {
+    // Initialize the socket connection here if needed
+    _connectSocket();
   }
 
-  Future<Either<AppFailure, String>> loginUser({
-    required String email,
+  void closeSocketConnection() {
+    _afterJoinStreamController.close();
+    _afterDisconnetStreamController.close();
+    socket.disconnect();
+    socket.onDisconnect(
+      (data) {
+        debugPrint("socketDisconnected");
+      },
+    );
+    socket.dispose();
+  }
+
+  // Factory constructor to return the static instance
+  factory AuthRemoteRepository() {
+    return _instance;
+  }
+
+  Future<void> _connectSocket() async {
+    String base = dotenv.get("BASE");
+    socket = io.io(base, <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': false,
+    });
+
+    socket.connect();
+
+    socket.onConnect((data) {
+      onDisconnectUser();
+      debugPrint("Socket Connected");
+    });
+  }
+
+  Future<Either<AppFailure, RoomModel>> createRoom({
+    required String roomName,
     required String password,
   }) async {
+    final completer = Completer<Either<AppFailure, RoomModel>>();
     try {
-      final response = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+      socket.emit("createRoom", {"roomName": roomName, "password": password});
 
-      print(response);
+      socket.on("roomCreated", (data) {
+        debugPrint(data.toString());
+        if (!completer.isCompleted) {
+          afterJoinRoom();
+          completer.complete(Right(RoomModel.fromMap(data)));
+        }
+      });
 
-      return const Right("Successfully logged in");
+      // Add a timeout to handle cases where the server doesn't respond
+      Future.delayed(const Duration(seconds: 10), () {
+        if (!completer.isCompleted) {
+          completer.complete(
+              Left(AppFailure("Timeout exceed! failed to created the room")));
+        }
+      });
     } catch (e) {
-      return Left(AppFailure(e.toString()));
+      if (!completer.isCompleted) {
+        completer.complete(Left(AppFailure(e.toString())));
+      }
     }
+
+    return completer.future;
+  }
+
+  Future<Either<AppFailure, RoomModel>> joinRoom({
+    required String roomId,
+    required String password,
+  }) async {
+    final completer = Completer<Either<AppFailure, RoomModel>>();
+    try {
+      socket.emit("joinRoom", {"roomId": roomId, "password": password});
+      socket.on("onJoinRoom", (data) {
+        debugPrint(data.toString());
+        if (!completer.isCompleted) {
+          afterJoinRoom();
+          completer.complete(Right(RoomModel.fromMap(data)));
+        }
+      });
+
+      // Add a timeout to handle cases where the server doesn't respond
+      Future.delayed(const Duration(seconds: 10), () {
+        if (!completer.isCompleted) {
+          completer.complete(
+              Left(AppFailure("Timeout exceed! failed to join the room")));
+        }
+      });
+    } catch (e) {
+      if (!completer.isCompleted) {
+        completer.complete(Left(AppFailure(e.toString())));
+      }
+    }
+
+    return completer.future;
+  }
+
+  Stream<String> get afterDisconnectStream =>
+      _afterDisconnetStreamController.stream;
+
+  Future<void> onDisconnectUser() async {
+    socket.on("disconnected", (data) {
+      debugPrint("User discooneceted: ${data.toString()}");
+      _afterDisconnetStreamController.add(data.toString());
+    });
+  }
+
+  Stream<ActiveUser> get afterJoinStream => _afterJoinStreamController.stream;
+
+  Future<void> afterJoinRoom() async {
+    socket.on("afterJoin", (data) {
+      ActiveUser newUser = ActiveUser.fromMap(data["activeUser"]);
+      debugPrint(newUser.toString());
+      _afterJoinStreamController.add(newUser);
+    });
+  }
+
+  Future<void> onCodeChange(WidgetRef ref) async {
+    socket.on("codeChange", (data) {
+      debugPrint(data.toString());
+      ref.read(codeStateProvider.notifier).state = data["code"].toString();
+    });
+  }
+
+  Future<void> emitCodeChange({
+    required String roomId,
+    required String code,
+  }) async {
+    socket.emit("codeChange", {"roomId": roomId, "code": code});
   }
 }

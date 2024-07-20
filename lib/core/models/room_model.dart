@@ -1,0 +1,154 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+
+class ActiveUser {
+  final String username;
+  final String id;
+
+  ActiveUser({required this.username, required this.id});
+
+  ActiveUser copyWith({
+    String? username,
+    String? id,
+  }) {
+    return ActiveUser(
+      username: username ?? this.username,
+      id: id ?? this.id,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'username': username,
+      'id': id,
+    };
+  }
+
+  factory ActiveUser.fromMap(Map<String, dynamic> map) {
+    return ActiveUser(
+      username: map['username'] as String,
+      id: map['id'] as String,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory ActiveUser.fromJson(String source) =>
+      ActiveUser.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  @override
+  String toString() => 'ActiveUser(username: $username, id: $id)';
+
+  @override
+  bool operator ==(covariant ActiveUser other) {
+    if (identical(this, other)) return true;
+
+    return other.username == username && other.id == id;
+  }
+
+  @override
+  int get hashCode => username.hashCode ^ id.hashCode;
+}
+
+class RoomModel {
+  final String roomName;
+  final String roomId;
+  final List<ActiveUser> activeUsers;
+  final String password;
+  final String message;
+  final bool success;
+  final String? code;
+
+  RoomModel({
+    required this.roomName,
+    required this.roomId,
+    required this.activeUsers,
+    required this.password,
+    required this.message,
+    required this.success,
+    required this.code,
+  });
+
+  RoomModel copyWith({
+    String? roomName,
+    String? roomId,
+    List<ActiveUser>? activeUsers,
+    String? password,
+    String? message,
+    bool? success,
+    String? code,
+  }) {
+    return RoomModel(
+      roomName: roomName ?? this.roomName,
+      roomId: roomId ?? this.roomId,
+      activeUsers: activeUsers ?? this.activeUsers,
+      password: password ?? this.password,
+      message: message ?? this.message,
+      success: success ?? this.success,
+      code: code ?? this.code,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'roomName': roomName,
+      'roomId': roomId,
+      'activeUsers': activeUsers.map((x) => x.toMap()).toList(),
+      'password': password,
+      'message': message,
+      'success': success,
+      'code': code,
+    };
+  }
+
+  // Corrected `fromMap` constructor
+  factory RoomModel.fromMap(Map<String, dynamic> map) {
+    return RoomModel(
+      roomName: map['roomName'] as String,
+      roomId: map['roomId'] as String,
+      activeUsers: (map['activeUsers'] as List<dynamic>)
+          .map((user) => ActiveUser.fromMap(user as Map<String, dynamic>))
+          .toList(),
+      password: map['password'] as String,
+      message: map['message'] as String,
+      success: map['success'] as bool,
+      code: map['code'] as String?,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory RoomModel.fromJson(String source) =>
+      RoomModel.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  @override
+  String toString() {
+    return 'RoomModel(roomName: $roomName, roomId: $roomId, activeUsers: $activeUsers, password: $password, message: $message, success: $success, code: $code)';
+  }
+
+  @override
+  bool operator ==(covariant RoomModel other) {
+    if (identical(this, other)) return true;
+
+    return other.roomName == roomName &&
+        other.roomId == roomId &&
+        listEquals(other.activeUsers, activeUsers) &&
+        other.password == password &&
+        other.message == message &&
+        other.success == success &&
+        other.code == code;
+  }
+
+  @override
+  int get hashCode {
+    return roomName.hashCode ^
+        roomId.hashCode ^
+        activeUsers.hashCode ^
+        password.hashCode ^
+        message.hashCode ^
+        success.hashCode ^
+        code.hashCode;
+  }
+}

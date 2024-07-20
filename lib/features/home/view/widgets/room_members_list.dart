@@ -1,27 +1,19 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vpn_apk/core/constants/text_styles.dart';
+import 'package:vpn_apk/core/providers/room_model_notifier.dart';
 import 'package:vpn_apk/core/theme/app_pallate.dart';
 import 'package:vpn_apk/core/view/components/custom_text_widget.dart';
-import 'package:vpn_apk/features/home/model/user.dart';
 
-class RoomMembersList extends StatelessWidget {
-  const RoomMembersList({super.key});
+class RoomMembersList extends ConsumerWidget {
+  const RoomMembersList({
+    super.key,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    List<RoomUser> _dummyUsers = [
-      RoomUser(name: 'Alice'),
-      RoomUser(name: 'Bob'),
-      RoomUser(name: 'Charlie'),
-      RoomUser(name: 'Diana'),
-      RoomUser(name: 'Eve'),
-      RoomUser(name: 'Frank'),
-      RoomUser(name: 'Grace'),
-      RoomUser(name: 'Hank'),
-      RoomUser(name: 'Ivy'),
-      RoomUser(name: 'Jack'),
-    ];
+  Widget build(BuildContext context, WidgetRef ref) {
+    final roomModel = ref.watch(roomModelNotifierProvider);
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 20,
@@ -29,8 +21,8 @@ class RoomMembersList extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const CustomTextWidget(
-            text: "CollabPAD",
+          CustomTextWidget(
+            text: roomModel!.roomName.toUpperCase(),
             color: Pallate.lightPurpleColor,
             fontSize: FontSize.semiLarge,
             fontFamily: "Montserrat Bold",
@@ -48,13 +40,13 @@ class RoomMembersList extends StatelessWidget {
           ),
           Flexible(
             child: ListView.builder(
-              itemCount: _dummyUsers.length,
+              itemCount: roomModel.activeUsers.length,
               scrollDirection: Axis.vertical,
               physics: const BouncingScrollPhysics(),
               itemBuilder: (context, index) {
-                final roomUser = _dummyUsers[index];
+                final roomUser = roomModel.activeUsers[index];
                 return Tooltip(
-                  message: roomUser.name,
+                  message: "${roomUser.username}: ${roomUser.id}",
                   child: Container(
                     height: 60,
                     width: 50,
@@ -76,7 +68,7 @@ class RoomMembersList extends StatelessWidget {
                           ),
                           Flexible(
                             child: CustomTextWidget(
-                              text: roomUser.name ?? "",
+                              text: "${roomUser.username}: ${roomUser.id}",
                               textOverflow: TextOverflow.ellipsis,
                               fontSize: FontSize.semiMedium,
                             ),
@@ -97,7 +89,7 @@ class RoomMembersList extends StatelessWidget {
             height: 10,
           ),
           CustomTextWidget(
-            text: "Total Room Member: ${_dummyUsers.length}",
+            text: "Total Room Member: ${roomModel.activeUsers.length}",
             color: Pallate.textFadeColor,
             fontSize: FontSize.semiMedium,
           ),

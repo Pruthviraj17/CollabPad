@@ -6,8 +6,8 @@ class FrostedGlassWidget extends StatelessWidget {
   const FrostedGlassWidget({
     super.key,
     this.child,
-     this.width,
-     this.height,
+    this.width,
+    this.height,
   });
   final Widget? child;
   final double? width;
@@ -30,9 +30,9 @@ class FrostedGlassWidget extends StatelessWidget {
             BackdropFilter(
               filter: ImageFilter.blur(
                 //sigmaX is the Horizontal blur
-                sigmaX: 4.0,
+                sigmaX: 4,
                 //sigmaY is the Vertical blur
-                sigmaY: 4.0,
+                sigmaY: 4,
               ),
               //we use this container to scale up the blur effect to fit its
               //  parent, without this container the blur effect doesn't appear.
