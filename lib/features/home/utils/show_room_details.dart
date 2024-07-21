@@ -49,9 +49,12 @@ Future<void> showRoomDetails(BuildContext context, RoomModel roomModel) async {
                     trailingWidget: IconButton(
                       onPressed: () =>
                           _copyTextToClipboard(context, roomModel.roomId!),
-                      icon: const Icon(
-                        Icons.copy_rounded,
-                        color: Pallate.whiteColor,
+                      icon: const Tooltip(
+                        message: "Copy RoomID",
+                        child: Icon(
+                          Icons.copy_rounded,
+                          color: Pallate.whiteColor,
+                        ),
                       ),
                     ),
                   ),

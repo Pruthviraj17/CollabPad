@@ -16,10 +16,12 @@ Future<void> main() async {
   final container = ProviderContainer();
   await container.read(authViewmodelProvider.notifier).init();
   container.read(colorPallateNotifierProvider.notifier).init();
+  Color? color =
+      await container.read(authViewmodelProvider.notifier).getThemeColor();
+  if (color != null) {
+    container.read(colorPallateNotifierProvider.notifier).changeBgColors(color);
+  }
 
-  // container
-  //     .read(colorPallateNotifierProvider.notifier)
-  //     .changeBgColors(const Color.fromARGB(255, 88, 14, 8));
   UserModel? userModel =
       await container.read(authViewmodelProvider.notifier).getUser();
 

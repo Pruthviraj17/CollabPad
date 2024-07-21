@@ -1,4 +1,5 @@
 import 'package:collabpad/core/theme/app_pallate.dart';
+import 'package:collabpad/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -21,6 +22,28 @@ class ColorPallateNotifier extends _$ColorPallateNotifier {
       selectedBackGrounfGradient2: lightenColor(color, 0.38),
       selectedBackGrounfGradient3: lightenColor(color, 0.5),
     );
+  }
+
+  Color getBaseColor() {
+    return state!.selectedBackGrounfGradient1;
+  }
+
+  void resetBgColors() {
+    state = state!.copyWith(
+      selectedBackGrounfGradient1: const Color(0xFF0D1441),
+      selectedBackGrounfGradient2: const Color(0xFF283584),
+      selectedBackGrounfGradient3: const Color(0xFF376AB2),
+    );
+  }
+
+  Future<bool> cancelBgColors() async {
+    Color? color =
+        await ref.read(authViewmodelProvider.notifier).getThemeColor();
+    if (color != null) {
+      changeBgColors(color);
+      return true;
+    }
+    return false;
   }
 
   Color lightenColor(Color color, double percentage) {

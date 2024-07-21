@@ -1,8 +1,10 @@
 import 'package:collabpad/core/constants/text_styles.dart';
 import 'package:collabpad/core/theme/app_pallate.dart';
+import 'package:collabpad/core/utils/show_custom_snackbar.dart';
 import 'package:collabpad/core/view/components/custom_text_widget.dart';
 import 'package:collabpad/core/view/widgets/frosted_glass_widget.dart';
 import 'package:collabpad/features/auth/view/widgets/auth_button.dart';
+import 'package:collabpad/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:collabpad/features/auth/viewmodel/color_pallate_notifier.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +40,17 @@ Future<void> showCustomColorPicker(
                     children: [
                       AuthButton(
                         onPressed: () {
-                          // update the color property in local
+                          Color? color = ref
+                              .read(colorPallateNotifierProvider.notifier)
+                              .getBaseColor();
+                          bool success = ref
+                              .read(authViewmodelProvider.notifier)
+                              .setThemeColor(color);
+                          if (success) {
+                            showSnackBar(
+                                context: context,
+                                content: "Theme color changed");
+                          }
                           Navigator.of(context).pop();
                         },
                         child: const CustomTextWidget(
@@ -52,7 +64,13 @@ Future<void> showCustomColorPicker(
                         height: 21,
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          await ref
+                              .read(colorPallateNotifierProvider.notifier)
+                              .cancelBgColors();
+
+                          Navigator.of(context).pop();
+                        },
                         child: const CustomTextWidget(
                           text: "Cancel!",
                           fontWeight: FontWeights.thinWeight,
@@ -61,7 +79,21 @@ Future<void> showCustomColorPicker(
                         ),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          ref
+                              .read(colorPallateNotifierProvider.notifier)
+                              .resetBgColors();
+
+                          bool success = ref
+                              .read(authViewmodelProvider.notifier)
+                              .resetTheme();
+                          if (success) {
+                            showSnackBar(
+                                context: context, content: "Theme color reset");
+                          }
+
+                          Navigator.of(context).pop();
+                        },
                         child: const CustomTextWidget(
                           text: "Reset?",
                           fontWeight: FontWeights.thinWeight,

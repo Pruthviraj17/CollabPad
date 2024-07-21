@@ -1,5 +1,6 @@
 import 'package:collabpad/core/models/user_model.dart';
 import 'package:collabpad/features/auth/repositories/auth_local_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_viewmodel.g.dart';
@@ -23,5 +24,17 @@ class AuthViewmodel extends _$AuthViewmodel {
 
   Future<UserModel?> getUser() async {
     return await _authLocalRepository.getUserInfo();
+  }
+
+  bool setThemeColor(Color color) {
+    return _authLocalRepository.setThemeColor(color);
+  }
+
+  bool resetTheme() {
+    return _authLocalRepository.removeThemeData();
+  }
+
+  Future<Color?> getThemeColor() async {
+    return await _authLocalRepository.getThemeColor();
   }
 }

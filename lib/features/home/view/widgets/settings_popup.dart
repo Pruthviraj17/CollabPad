@@ -5,9 +5,11 @@ import 'package:collabpad/core/theme/app_pallate.dart';
 import 'package:collabpad/core/view/animations/page_navigation_animation.dart';
 import 'package:collabpad/core/view/components/custom_text_widget.dart';
 import 'package:collabpad/features/auth/repositories/auth_remote_repository.dart';
+import 'package:collabpad/features/auth/utils/show_color_picker_dialogue.dart';
 import 'package:collabpad/features/auth/view/pages/auth_page.dart';
 import 'package:collabpad/features/home/utils/show_room_details.dart';
 import 'package:collabpad/features/home/utils/show_user_details.dart';
+import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -62,7 +64,7 @@ class SettingsPopup extends ConsumerWidget {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,7 +77,7 @@ class SettingsPopup extends ConsumerWidget {
               },
             ),
             const SizedBox(
-              width: 150,
+              width: 160,
               child: Divider(
                 color: Pallate.textFadeColor,
                 thickness: 0.5,
@@ -89,7 +91,21 @@ class SettingsPopup extends ConsumerWidget {
               },
             ),
             const SizedBox(
-              width: 150,
+              width: 160,
+              child: Divider(
+                color: Pallate.textFadeColor,
+                thickness: 0.5,
+              ),
+            ),
+            settingsTile(
+              iconData: Icons.color_lens_rounded,
+              title: "Change Theme",
+              onTap: () async {
+                await showCustomColorPicker(context: context, ref: ref);
+              },
+            ),
+            const SizedBox(
+              width: 160,
               child: Divider(
                 color: Pallate.textFadeColor,
                 thickness: 0.5,
