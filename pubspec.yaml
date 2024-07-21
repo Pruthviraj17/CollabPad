@@ -1,4 +1,4 @@
-name: vpn_apk
+name: collabpad
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -40,17 +40,12 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_svg: ^2.0.10+1
   lottie: ^3.1.2
-  firebase_auth: ^5.1.1
-  firebase_core: ^3.1.1
-  google_sign_in: ^6.2.1
-  cloud_firestore: ^5.0.2
-  uuid: ^4.4.0
   flutter_dotenv: ^5.1.0
   shared_preferences: ^2.2.3
-  image_picker: ^1.1.2
   flutter_code_editor: ^0.3.2
   socket_io_client: ^3.0.0-beta.2
   file_picker: ^8.0.6
+  flex_color_picker: ^3.5.1
 
 dev_dependencies:
   flutter_test:

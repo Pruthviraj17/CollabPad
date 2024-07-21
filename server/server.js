@@ -30,7 +30,12 @@ io.on("connection", (socket) => {
 
     const user = new User.User(userModel, socket.id);
 
-    activeRooms[roomId] = { roomName, password, users: [user] };
+    activeRooms[roomId] = {
+      roomName,
+      password,
+      code: "// write here",
+      users: [user],
+    };
 
     console.log(activeRooms[roomId].users[0].userModel.username);
 
@@ -41,6 +46,7 @@ io.on("connection", (socket) => {
       activeUsers: activeRooms[roomId].users,
       roomId,
       password,
+      code: activeRooms[roomId].code,
       message: "Successfully created the room",
       success: true,
     });
@@ -96,7 +102,8 @@ io.on("connection", (socket) => {
 
   socket.on("codeChange", ({ roomId, code }) => {
     activeRooms[roomId].code = code;
-    socket.in(roomId).emit("codeChange", { code });
+    console.log(code);
+    socket.in(roomId).emit("codeChange", code);
   });
 
   // room user disconnected
@@ -107,6 +114,9 @@ io.on("connection", (socket) => {
         const user = users[index];
         if (user.id == socket.id) {
           activeRooms[roomId].users.splice(index, 1);
+          if (activeRooms[roomId].users.length == 0) {
+            delete activeRooms[roomId];
+          }
           io.to(roomId).emit("disconnected", socket.id);
         }
       }

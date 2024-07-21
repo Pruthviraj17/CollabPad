@@ -1,11 +1,11 @@
+import 'package:collabpad/core/constants/text_styles.dart';
+import 'package:collabpad/core/providers/room_model_notifier.dart';
+import 'package:collabpad/core/theme/app_pallate.dart';
+import 'package:collabpad/features/auth/repositories/auth_remote_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vpn_apk/core/constants/text_styles.dart';
-import 'package:vpn_apk/core/providers/room_model_notifier.dart';
-import 'package:vpn_apk/core/theme/app_pallate.dart';
 import 'package:flutter_highlight/themes/monokai-sublime.dart';
-import 'package:vpn_apk/features/auth/repositories/auth_remote_repository.dart';
 
 class EditPad extends ConsumerStatefulWidget {
   const EditPad({
@@ -22,10 +22,11 @@ class _EditPadState extends ConsumerState<EditPad> {
   @override
   void initState() {
     _codeFieldController.popupController.enabled = false;
+
     ref.read(authRemoteRepositoryProvider).onCodeChange();
+
     ref.read(authRemoteRepositoryProvider).onCodeChangeStream.listen(
       (code) {
-        // ref.read(codeStateProvider.notifier).state = code;
         _codeFieldController.text = code;
       },
     );
@@ -40,9 +41,11 @@ class _EditPadState extends ConsumerState<EditPad> {
 
   @override
   Widget build(BuildContext context) {
-    // final code = ref.watch(codeStateProvider);
-    // _codeFieldController.text = code;
     final roomModel = ref.watch(roomModelNotifierProvider);
+    ref
+        .read(authRemoteRepositoryProvider)
+        .onCodeChangeStreamController
+        .add(roomModel!.code!);
 
     return Align(
       alignment: Alignment.topLeft,

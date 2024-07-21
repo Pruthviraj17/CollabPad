@@ -1,10 +1,10 @@
+import 'package:collabpad/core/constants/text_styles.dart';
+import 'package:collabpad/core/models/room_model.dart';
+import 'package:collabpad/core/theme/app_pallate.dart';
+import 'package:collabpad/core/view/components/custom_text_widget.dart';
+import 'package:collabpad/core/view/widgets/frosted_glass_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:vpn_apk/core/constants/text_styles.dart';
-import 'package:vpn_apk/core/models/room_model.dart';
-import 'package:vpn_apk/core/theme/app_pallate.dart';
-import 'package:vpn_apk/core/view/components/custom_text_widget.dart';
-import 'package:vpn_apk/core/view/widgets/frosted_glass_widget.dart';
 
 Future<void> showRoomDetails(BuildContext context, RoomModel roomModel) async {
   await showDialog(
@@ -42,13 +42,17 @@ Future<void> showRoomDetails(BuildContext context, RoomModel roomModel) async {
                   const SizedBox(
                     height: 11,
                   ),
-                  InkWell(
-                    onTap: () =>
-                        _copyTextToClipboard(context, roomModel.roomId!),
-                    child: roomDetailsTile(
-                      title: "Room Id",
-                      desc: roomModel.roomId!,
-                      iconData: Icons.numbers_rounded,
+                  roomDetailsTile(
+                    title: "Room Id",
+                    desc: roomModel.roomId!,
+                    iconData: Icons.numbers_rounded,
+                    trailingWidget: IconButton(
+                      onPressed: () =>
+                          _copyTextToClipboard(context, roomModel.roomId!),
+                      icon: const Icon(
+                        Icons.copy_rounded,
+                        color: Pallate.whiteColor,
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -81,6 +85,7 @@ Widget roomDetailsTile({
   required String title,
   required String desc,
   required IconData iconData,
+  Widget? trailingWidget,
 }) {
   return Row(
     mainAxisSize: MainAxisSize.min,
@@ -108,6 +113,8 @@ Widget roomDetailsTile({
           ),
         ],
       ),
+      const Spacer(),
+      if (trailingWidget != null) trailingWidget
     ],
   );
 }

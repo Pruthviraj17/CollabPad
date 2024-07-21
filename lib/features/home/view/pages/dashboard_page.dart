@@ -1,14 +1,15 @@
+import 'package:collabpad/core/providers/room_model_notifier.dart';
+import 'package:collabpad/core/theme/app_pallate.dart';
+import 'package:collabpad/core/utils/show_custom_snackbar.dart';
+import 'package:collabpad/core/view/widgets/bg_gradient.dart';
+import 'package:collabpad/core/view/widgets/frosted_glass_widget.dart';
+import 'package:collabpad/features/auth/repositories/auth_remote_repository.dart';
+import 'package:collabpad/features/home/view/widgets/edit_pad.dart';
+import 'package:collabpad/features/home/view/widgets/room_members_list.dart';
+import 'package:collabpad/features/home/view/widgets/settings_popup.dart';
+import 'package:collabpad/features/home/viewmodel/toggle_settings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vpn_apk/core/providers/room_model_notifier.dart';
-import 'package:vpn_apk/core/theme/app_pallate.dart';
-import 'package:vpn_apk/core/view/widgets/bg_gradient.dart';
-import 'package:vpn_apk/core/view/widgets/frosted_glass_widget.dart';
-import 'package:vpn_apk/features/auth/repositories/auth_remote_repository.dart';
-import 'package:vpn_apk/features/home/view/widgets/edit_pad.dart';
-import 'package:vpn_apk/features/home/view/widgets/room_members_list.dart';
-import 'package:vpn_apk/features/home/view/widgets/settings_popup.dart';
-import 'package:vpn_apk/features/home/viewmodel/toggle_settings_provider.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
@@ -29,12 +30,17 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     // add when new user joins the room
     ref.read(authRemoteRepositoryProvider).afterJoinStream.listen(
       (newUser) {
-        ref.read(roomModelNotifierProvider.notifier).addNewUser(newUser);
+        String username =
+            ref.read(roomModelNotifierProvider.notifier).addNewUser(newUser);
+        showSnackBar(context: context, content: "$username joined the room");
       },
     );
     ref.read(authRemoteRepositoryProvider).afterDisconnectStream.listen(
       (id) {
-        ref.read(roomModelNotifierProvider.notifier).removeActiveUser(id);
+        String username =
+            ref.read(roomModelNotifierProvider.notifier).removeActiveUser(id);
+
+        showSnackBar(context: context, content: "$username left the room");
       },
     );
   }

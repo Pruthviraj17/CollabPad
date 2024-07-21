@@ -1,20 +1,23 @@
+import 'package:collabpad/core/constants/text_styles.dart';
+import 'package:collabpad/core/providers/room_model_notifier.dart';
+import 'package:collabpad/core/providers/user_model_notifier.dart';
+import 'package:collabpad/core/theme/app_pallate.dart';
+import 'package:collabpad/core/view/animations/page_navigation_animation.dart';
+import 'package:collabpad/core/view/components/custom_text_widget.dart';
+import 'package:collabpad/features/auth/repositories/auth_remote_repository.dart';
+import 'package:collabpad/features/auth/view/pages/auth_page.dart';
+import 'package:collabpad/features/home/utils/show_room_details.dart';
+import 'package:collabpad/features/home/utils/show_user_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vpn_apk/core/constants/text_styles.dart';
-import 'package:vpn_apk/core/providers/room_model_notifier.dart';
-import 'package:vpn_apk/core/theme/app_pallate.dart';
-import 'package:vpn_apk/core/view/animations/page_navigation_animation.dart';
-import 'package:vpn_apk/core/view/components/custom_text_widget.dart';
-import 'package:vpn_apk/features/auth/view/pages/auth_page.dart';
-import 'package:vpn_apk/features/home/utils/show_room_details.dart';
 
 class SettingsPopup extends ConsumerWidget {
-  const SettingsPopup( {super.key});
-
+  const SettingsPopup({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final roomModel=ref.watch(roomModelNotifierProvider);
+    final roomModel = ref.watch(roomModelNotifierProvider);
+    final userModel = ref.watch(userModelNotifierProvider);
     Widget settingsTile({
       required IconData iconData,
       required String title,
@@ -65,6 +68,20 @@ class SettingsPopup extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             settingsTile(
+              iconData: Icons.account_circle_rounded,
+              title: "User Details",
+              onTap: () {
+                showUserDetails(context, userModel);
+              },
+            ),
+            const SizedBox(
+              width: 150,
+              child: Divider(
+                color: Pallate.textFadeColor,
+                thickness: 0.5,
+              ),
+            ),
+            settingsTile(
               iconData: Icons.other_houses_outlined,
               title: "Room Details",
               onTap: () {
@@ -82,7 +99,7 @@ class SettingsPopup extends ConsumerWidget {
               iconData: Icons.logout_rounded,
               title: "Log Out",
               onTap: () {
-                // ref.read(authRemoteRepositoryProvider).closeSocketConnection();
+                ref.read(authRemoteRepositoryProvider).closeSocketConnection();
                 Navigator.of(context).pushReplacement(
                   PageNavigationAnimation(
                     page: const AuthPage(),

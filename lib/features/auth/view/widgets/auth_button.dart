@@ -1,5 +1,5 @@
+import 'package:collabpad/core/theme/app_pallate.dart';
 import 'package:flutter/material.dart';
-import 'package:vpn_apk/core/theme/app_pallate.dart';
 
 class AuthButton extends StatelessWidget {
   const AuthButton({
@@ -15,8 +15,9 @@ class AuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: onPressed ?? () {},
+      splashColor: Pallate.transparentColor,
       child: Container(
         width: 200,
         padding: padding ?? const EdgeInsets.all(12),

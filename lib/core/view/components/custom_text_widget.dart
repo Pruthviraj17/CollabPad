@@ -1,7 +1,7 @@
+import 'package:collabpad/core/constants/text_styles.dart';
+import 'package:collabpad/core/theme/app_pallate.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vpn_apk/core/constants/text_styles.dart';
-import 'package:vpn_apk/core/theme/app_pallate.dart';
 
 class CustomTextWidget extends StatelessWidget {
   const CustomTextWidget({

@@ -1,6 +1,6 @@
+import 'package:collabpad/core/models/user_model.dart';
+import 'package:collabpad/features/auth/repositories/auth_local_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:vpn_apk/core/models/user_model.dart';
-import 'package:vpn_apk/features/auth/repositories/auth_local_repository.dart';
 
 part 'auth_viewmodel.g.dart';
 

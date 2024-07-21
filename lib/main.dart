@@ -1,38 +1,37 @@
+import 'package:collabpad/core/models/user_model.dart';
+import 'package:collabpad/core/providers/user_model_notifier.dart';
+import 'package:collabpad/core/theme/theme.dart';
+import 'package:collabpad/features/auth/view/pages/auth_page.dart';
+import 'package:collabpad/features/auth/view/pages/flash_screen_page.dart';
+import 'package:collabpad/features/auth/view/pages/get_started_page.dart';
+import 'package:collabpad/features/auth/viewmodel/auth_viewmodel.dart';
+import 'package:collabpad/features/auth/viewmodel/color_pallate_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vpn_apk/core/models/user_model.dart';
-import 'package:vpn_apk/core/theme/theme.dart';
-import 'package:vpn_apk/features/auth/view/pages/flash_screen_page.dart';
-import 'package:vpn_apk/features/auth/viewmodel/auth_viewmodel.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   final container = ProviderContainer();
   await container.read(authViewmodelProvider.notifier).init();
+  container.read(colorPallateNotifierProvider.notifier).init();
+
+  // container
+  //     .read(colorPallateNotifierProvider.notifier)
+  //     .changeBgColors(const Color.fromARGB(255, 88, 14, 8));
   UserModel? userModel =
       await container.read(authViewmodelProvider.notifier).getUser();
-  bool isGetStartedScreen = userModel == null;
 
-  // await container.read(authViewmodelProvider.notifier).getData();
-  // if (kIsWeb) {
-  //   await Firebase.initializeApp(
-  //     options: FirebaseOptions(
-  //       apiKey: dotenv.get("API_KEY"),
-  //       appId: dotenv.get("APP_ID"),
-  //       messagingSenderId: dotenv.get("MESSAGING_SENDER_ID"),
-  //       projectId: dotenv.get("PROJECT_ID"),
-  //     ),
-  //   );
-  // } else {
-  //   Firebase.initializeApp();
-  // }
+  if (userModel != null) {
+    container.read(userModelNotifierProvider.notifier).addUser(userModel);
+  }
 
   runApp(
-    ProviderScope(
+    UncontrolledProviderScope(
+      container: container,
       child: MyApp(
-        isGetStartedScreen: isGetStartedScreen,
+        userModel: userModel,
       ),
     ),
   );
@@ -41,17 +40,21 @@ Future<void> main() async {
 class MyApp extends ConsumerWidget {
   const MyApp({
     super.key,
-    required this.isGetStartedScreen,
+    this.userModel,
   });
-  final bool isGetStartedScreen;
+
+  final UserModel? userModel;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    UserModel? userModel = ref.read(userModelNotifierProvider);
     return MaterialApp(
       title: 'CollabPad',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkThemeMode,
-      home: FlashScreenPage(
-        isGetStartedScreen: isGetStartedScreen,
+      home:
+          // GetStartedPage()
+          FlashScreenPage(
+        isGetStartedScreen: userModel == null,
       ),
     );
   }

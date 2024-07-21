@@ -1,5 +1,5 @@
+import 'package:collabpad/core/models/user_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:vpn_apk/core/models/user_model.dart';
 
 part "user_model_notifier.g.dart";
 

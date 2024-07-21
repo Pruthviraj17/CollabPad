@@ -1,14 +1,15 @@
 import 'dart:async';
 
+import 'package:collabpad/core/constants/text_styles.dart';
+import 'package:collabpad/core/utils/screen_size.dart';
+import 'package:collabpad/core/view/animations/page_navigation_animation.dart';
+import 'package:collabpad/core/view/components/custom_text_widget.dart';
+import 'package:collabpad/core/view/widgets/bg_gradient.dart';
+import 'package:collabpad/features/auth/view/pages/auth_page.dart';
+import 'package:collabpad/features/auth/view/pages/get_started_page.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:vpn_apk/core/view/animations/page_navigation_animation.dart';
-import 'package:vpn_apk/core/view/components/custom_text_widget.dart';
-import 'package:vpn_apk/core/constants/text_styles.dart';
-import 'package:vpn_apk/core/utils/screen_size.dart';
-import 'package:vpn_apk/features/auth/view/pages/auth_page.dart';
-import 'package:vpn_apk/core/view/widgets/bg_gradient.dart';
-import 'package:vpn_apk/features/auth/view/pages/get_started_page.dart';
+
 
 class FlashScreenPage extends StatefulWidget {
   const FlashScreenPage({super.key, required this.isGetStartedScreen});
@@ -38,7 +39,7 @@ class _FlashScreenPageState extends State<FlashScreenPage> {
     return Scaffold(
       body: BgGradientWidget(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(12.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

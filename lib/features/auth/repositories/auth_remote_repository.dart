@@ -1,15 +1,16 @@
 import 'dart:async';
 
+import 'package:collabpad/core/failure/app_failure.dart';
+import 'package:collabpad/core/models/room_model.dart';
+import 'package:collabpad/core/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:vpn_apk/core/failure/app_failure.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
-import 'package:vpn_apk/core/models/room_model.dart';
-import 'package:vpn_apk/core/models/user_model.dart';
+
 part 'auth_remote_repository.g.dart';
 
 @riverpod
@@ -23,7 +24,7 @@ class AuthRemoteRepository {
   late io.Socket socket;
   final _afterJoinStreamController = StreamController<ActiveUser>.broadcast();
   final _afterDisconnetStreamController = StreamController<String>.broadcast();
-  final _onCodeChangeStreamController = StreamController<String>.broadcast();
+  final onCodeChangeStreamController = StreamController<String>.broadcast();
 
   // Static instance for singleton pattern
   static final AuthRemoteRepository _instance =
@@ -38,7 +39,7 @@ class AuthRemoteRepository {
   void closeSocketConnection() {
     _afterJoinStreamController.close();
     _afterDisconnetStreamController.close();
-    _onCodeChangeStreamController.close();
+    onCodeChangeStreamController.close();
     socket.disconnect();
     socket.onDisconnect(
       (data) {
@@ -156,18 +157,15 @@ class AuthRemoteRepository {
   Future<void> afterJoinRoom() async {
     socket.on("afterJoin", (data) {
       ActiveUser newUser = ActiveUser.fromMap(data["activeUser"]);
-      debugPrint("New user joined room: ${newUser.toString()}");
       _afterJoinStreamController.add(newUser);
     });
   }
 
-  Stream<String> get onCodeChangeStream => _onCodeChangeStreamController.stream;
+  Stream<String> get onCodeChangeStream => onCodeChangeStreamController.stream;
 
   Future<void> onCodeChange() async {
     socket.on("codeChange", (data) {
-      debugPrint(data.toString());
-      _onCodeChangeStreamController.add(data.toString());
-      // ref.read(codeStateProvider.notifier).state = data["code"].toString();
+      onCodeChangeStreamController.add(data.toString());
     });
   }
 

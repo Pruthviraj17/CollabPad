@@ -1,5 +1,5 @@
+import 'package:collabpad/core/theme/app_pallate.dart';
 import 'package:flutter/material.dart';
-import 'package:vpn_apk/core/theme/app_pallate.dart';
 
 class AppTheme {
   static OutlineInputBorder _border(Color color) => OutlineInputBorder(

@@ -1,8 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-
+import 'package:collabpad/core/models/user_model.dart';
 import 'package:flutter/foundation.dart';
-import 'package:vpn_apk/core/models/user_model.dart';
 
 class ActiveUser {
   final UserModel? userModel;

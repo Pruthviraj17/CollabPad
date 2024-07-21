@@ -1,5 +1,5 @@
+import 'package:collabpad/core/models/room_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:vpn_apk/core/models/room_model.dart';
 
 part "room_model_notifier.g.dart";
 
@@ -14,15 +14,23 @@ class RoomModelNotifier extends _$RoomModelNotifier {
     state = roomModel;
   }
 
-  void addNewUser(ActiveUser activeUser) {
+  String addNewUser(ActiveUser activeUser) {
     state = state!.copyWith(
       activeUsers: [...state!.activeUsers!, activeUser],
     );
+    return activeUser.userModel!.username!;
   }
 
-  void removeActiveUser(String id) {
+  String removeActiveUser(String id) {
+    String username=id;
     state = state!.copyWith(
-      activeUsers: state!.activeUsers!.where((user) => user.id != id).toList(),
+      activeUsers: state!.activeUsers!.where((user) {
+        if(user.id==id){
+          username=user.userModel!.username??id;
+        }
+        return user.id != id;
+      }).toList(),
     );
+    return username;
   }
 }

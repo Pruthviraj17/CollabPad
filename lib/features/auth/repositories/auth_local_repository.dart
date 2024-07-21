@@ -1,8 +1,7 @@
 import 'dart:convert';
-
+import 'package:collabpad/core/models/user_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vpn_apk/core/models/user_model.dart';
 
 part 'auth_local_repository.g.dart';
 

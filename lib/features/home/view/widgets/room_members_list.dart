@@ -1,10 +1,11 @@
+import 'package:collabpad/core/utils/image_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vpn_apk/core/constants/text_styles.dart';
-import 'package:vpn_apk/core/providers/room_model_notifier.dart';
-import 'package:vpn_apk/core/theme/app_pallate.dart';
-import 'package:vpn_apk/core/utils/image_utils.dart';
-import 'package:vpn_apk/core/view/components/custom_text_widget.dart';
+import 'package:collabpad/core/constants/text_styles.dart';
+import 'package:collabpad/core/providers/room_model_notifier.dart';
+import 'package:collabpad/core/theme/app_pallate.dart';
+import 'package:collabpad/core/view/components/custom_text_widget.dart';
+
 
 class RoomMembersList extends ConsumerWidget {
   const RoomMembersList({
