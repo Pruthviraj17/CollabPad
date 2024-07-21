@@ -36,7 +36,7 @@ Future<void> showRoomDetails(BuildContext context, RoomModel roomModel) async {
                   ),
                   roomDetailsTile(
                     title: "Room Name",
-                    desc: roomModel.roomName,
+                    desc: roomModel.roomName!,
                     iconData: Icons.label_important_rounded,
                   ),
                   const SizedBox(
@@ -44,10 +44,10 @@ Future<void> showRoomDetails(BuildContext context, RoomModel roomModel) async {
                   ),
                   InkWell(
                     onTap: () =>
-                        _copyTextToClipboard(context, roomModel.roomId),
+                        _copyTextToClipboard(context, roomModel.roomId!),
                     child: roomDetailsTile(
                       title: "Room Id",
-                      desc: roomModel.roomId,
+                      desc: roomModel.roomId!,
                       iconData: Icons.numbers_rounded,
                     ),
                   ),
@@ -56,7 +56,7 @@ Future<void> showRoomDetails(BuildContext context, RoomModel roomModel) async {
                   ),
                   roomDetailsTile(
                     title: "Room Password",
-                    desc: roomModel.password,
+                    desc: roomModel.password!,
                     iconData: Icons.lock_outline_rounded,
                   ),
                 ],

@@ -21,8 +21,14 @@ final _codeFieldController = CodeController();
 class _EditPadState extends ConsumerState<EditPad> {
   @override
   void initState() {
-    _codeFieldController.popupController.enabled = true;
-    ref.read(authRemoteRepositoryProvider).onCodeChange(ref);
+    _codeFieldController.popupController.enabled = false;
+    ref.read(authRemoteRepositoryProvider).onCodeChange();
+    ref.read(authRemoteRepositoryProvider).onCodeChangeStream.listen(
+      (code) {
+        // ref.read(codeStateProvider.notifier).state = code;
+        _codeFieldController.text = code;
+      },
+    );
     super.initState();
   }
 
@@ -34,8 +40,8 @@ class _EditPadState extends ConsumerState<EditPad> {
 
   @override
   Widget build(BuildContext context) {
-    final code = ref.watch(codeStateProvider);
-    _codeFieldController.text = code;
+    // final code = ref.watch(codeStateProvider);
+    // _codeFieldController.text = code;
     final roomModel = ref.watch(roomModelNotifierProvider);
 
     return Align(
@@ -54,7 +60,7 @@ class _EditPadState extends ConsumerState<EditPad> {
                   controller: _codeFieldController,
                   onChanged: (codeChange) async {
                     ref.read(authRemoteRepositoryProvider).emitCodeChange(
-                          roomId: roomModel!.roomId,
+                          roomId: roomModel!.roomId!,
                           code: codeChange,
                         );
                   },

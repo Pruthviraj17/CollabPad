@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:vpn_apk/core/theme/app_pallate.dart';
-import 'package:vpn_apk/core/utils/screen_size.dart';
 
 class AuthButton extends StatelessWidget {
   const AuthButton({

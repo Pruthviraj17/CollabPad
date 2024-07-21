@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vpn_apk/core/utils/screen_size.dart';
-import 'package:vpn_apk/features/auth/view/pages/auth_page.dart';
 
 class PageNavigationAnimation<T> extends PageRouteBuilder<T> {
   final Widget page;

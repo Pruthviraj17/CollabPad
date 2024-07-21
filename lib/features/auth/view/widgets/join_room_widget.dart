@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:vpn_apk/core/models/room_model.dart';
+import 'package:vpn_apk/core/models/user_model.dart';
 import 'package:vpn_apk/core/providers/room_model_notifier.dart';
 import 'package:vpn_apk/core/utils/screen_size.dart';
 import 'package:vpn_apk/core/utils/show_custom_snackbar.dart';
@@ -12,6 +13,7 @@ import 'package:vpn_apk/core/view/components/custom_text_widget.dart';
 import 'package:vpn_apk/core/view/components/custom_text_form_field.dart';
 import 'package:vpn_apk/core/constants/text_styles.dart';
 import 'package:vpn_apk/core/theme/app_pallate.dart';
+import 'package:vpn_apk/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:vpn_apk/features/home/view/pages/dashboard_page.dart';
 
 class JoinRoomWidget extends ConsumerStatefulWidget {
@@ -26,6 +28,11 @@ class _LoginFormWidgetState extends ConsumerState<JoinRoomWidget> {
   final TextEditingController _roomPassController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _roomIdController.dispose();
     _roomPassController.dispose();
@@ -33,9 +40,12 @@ class _LoginFormWidgetState extends ConsumerState<JoinRoomWidget> {
   }
 
   void joinRoom() async {
+    UserModel? userModel =
+        await ref.read(authViewmodelProvider.notifier).getUser();
     final res = await ref.read(authRemoteRepositoryProvider).joinRoom(
           roomId: _roomIdController.text,
           password: _roomPassController.text,
+          userModel: userModel,
         );
     if (mounted) {
       final val = switch (res) {

@@ -19,13 +19,20 @@ const activeRooms = {};
 // create room function
 io.on("connection", (socket) => {
   // create the room
-  socket.on("createRoom", ({ roomName, password, userDetails }) => {
+  socket.on("createRoom", ({ roomName, password, userModel }) => {
     const roomId = helper.generateRoomId();
 
-    userName = userDetails === undefined ? `Admin` : userDetails;
-    const user = new User(userName, socket.id);
+    if (userModel === null) {
+      userModel = new User.UserModel("Admin", null, null);
+    } else if (userModel.username === null) {
+      userModel.username = "Admin";
+    }
+
+    const user = new User.User(userModel, socket.id);
 
     activeRooms[roomId] = { roomName, password, users: [user] };
+
+    console.log(activeRooms[roomId].users[0].userModel.username);
 
     socket.join(roomId);
 
@@ -40,26 +47,28 @@ io.on("connection", (socket) => {
   });
 
   // join the room
-  socket.on("joinRoom", ({ roomId, password, userDetails }) => {
+  socket.on("joinRoom", ({ roomId, password, userModel }) => {
     const isRoomPresent = activeRooms[roomId];
     if (isRoomPresent) {
       const roomDetails = activeRooms[roomId];
       if (roomDetails["password"] === password) {
-        userName = userDetails === undefined ? `Guest` : userDetails;
-        const user = new User(userName, socket.id);
+        if (userModel === null) {
+          userModel = new User.UserModel(
+            `Guest ${activeRooms[roomId].users.length}`,
+            null,
+            null
+          );
+        } else if (userModel.username === null) {
+          userModel.username = `Guest ${activeRooms[roomId].users.length}`;
+        }
 
-        console.log(`UserDetails: ${userDetails}`);
+        const user = new User.User(userModel, socket.id);
+
         activeRooms[roomId].users.push(user);
 
-        console.log(activeRooms);
-
-        io.to(roomId).emit("userJoined", { userDetails });
+        io.to(roomId).emit("afterJoin", { activeUser: user });
 
         socket.join(roomId);
-
-        socket.broadcast.emit("afterJoin", {
-          activeUser: user,
-        });
 
         socket.emit("onJoinRoom", {
           roomName: activeRooms[roomId]["roomName"],
@@ -87,53 +96,31 @@ io.on("connection", (socket) => {
 
   socket.on("codeChange", ({ roomId, code }) => {
     activeRooms[roomId].code = code;
-    console.log(`code change ${code}`);
     socket.in(roomId).emit("codeChange", { code });
   });
 
   // room user disconnected
   socket.on("disconnect", async () => {
-    console.log("A user disconnected:", socket.id);
-    // for (const roomId in activeRooms) {
-    //   const room = activeRooms[roomId];
-
-    //   // Ensure room has users
-    //   if (room.users) {
-    //     // Iterate over each user in the users map
-    //     for (const username in room.users) {
-    //       const user = room.users[username];
-
-    //       // Check if the user's id matches the socket.id
-    //       if (user.id === socket.id) {
-    //         console.log(`User found: ${username}`);
-    //         delete room.users[username];
-    //         // Optionally, perform additional actions here
-    //         break; // Exit the loop if the user is found
-    //       }
-    //     }
-    //   }
-    // }
-
     for (const roomId in activeRooms) {
       const users = activeRooms[roomId]["users"];
       for (let index = 0; index < users.length; index++) {
         const user = users[index];
         if (user.id == socket.id) {
-          console.log("user found at index: " + index);
           activeRooms[roomId].users.splice(index, 1);
+          io.to(roomId).emit("disconnected", socket.id);
         }
       }
     }
-
-    socket.broadcast.emit("disconnected", socket.id);
   });
 });
 
-app.get("/roomid", (req, res, next) => {
-  res.json({
-    message: "Server Running Successfully",
-    roomId: helper.generateRoomId(),
-  });
+app.get("/", (req, res, next) => {
+  res.send(
+    `<div style="text-align: center; margin-top: 20%; width: 100%; font-family: monospace;">
+    <h2>Welcome to CollabPAD!</h2>
+    <h3>This api base url, Please use CollabPad web app.</h3>
+    </div>`
+  );
 });
 
 const PORT = process.env.PORT | 3000;

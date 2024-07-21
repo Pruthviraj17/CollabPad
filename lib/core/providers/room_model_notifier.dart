@@ -16,13 +16,13 @@ class RoomModelNotifier extends _$RoomModelNotifier {
 
   void addNewUser(ActiveUser activeUser) {
     state = state!.copyWith(
-      activeUsers: [...state!.activeUsers, activeUser],
+      activeUsers: [...state!.activeUsers!, activeUser],
     );
   }
 
   void removeActiveUser(String id) {
     state = state!.copyWith(
-      activeUsers: state!.activeUsers.where((user) => user.id != id).toList(),
+      activeUsers: state!.activeUsers!.where((user) => user.id != id).toList(),
     );
   }
 }

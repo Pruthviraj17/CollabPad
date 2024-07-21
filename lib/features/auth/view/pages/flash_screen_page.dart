@@ -11,7 +11,8 @@ import 'package:vpn_apk/core/view/widgets/bg_gradient.dart';
 import 'package:vpn_apk/features/auth/view/pages/get_started_page.dart';
 
 class FlashScreenPage extends StatefulWidget {
-  const FlashScreenPage({super.key});
+  const FlashScreenPage({super.key, required this.isGetStartedScreen});
+  final bool isGetStartedScreen;
 
   @override
   State<FlashScreenPage> createState() => _FlashScreenPageState();
@@ -24,7 +25,9 @@ class _FlashScreenPageState extends State<FlashScreenPage> {
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.of(context).pushReplacement(
         PageNavigationAnimation(
-          page: const GetStartedPage(),
+          page: widget.isGetStartedScreen
+              ? const GetStartedPage()
+              : const AuthPage(),
         ),
       );
     });

@@ -2,34 +2,35 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:vpn_apk/core/models/user_model.dart';
 
 class ActiveUser {
-  final String username;
-  final String id;
+  final UserModel? userModel;
+  final String? id;
 
-  ActiveUser({required this.username, required this.id});
+  ActiveUser({required this.userModel, required this.id});
 
   ActiveUser copyWith({
-    String? username,
+    UserModel? userModel,
     String? id,
   }) {
     return ActiveUser(
-      username: username ?? this.username,
+      userModel: userModel,
       id: id ?? this.id,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'username': username,
+      'userModel': userModel,
       'id': id,
     };
   }
 
   factory ActiveUser.fromMap(Map<String, dynamic> map) {
     return ActiveUser(
-      username: map['username'] as String,
-      id: map['id'] as String,
+      userModel: UserModel.fromJson(map['userModel']),
+      id: map['id'] ?? "",
     );
   }
 
@@ -39,26 +40,26 @@ class ActiveUser {
       ActiveUser.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'ActiveUser(username: $username, id: $id)';
+  String toString() => 'ActiveUser(username: $userModel, id: $id)';
 
   @override
   bool operator ==(covariant ActiveUser other) {
     if (identical(this, other)) return true;
 
-    return other.username == username && other.id == id;
+    return other.userModel == userModel && other.id == id;
   }
 
   @override
-  int get hashCode => username.hashCode ^ id.hashCode;
+  int get hashCode => userModel.hashCode ^ id.hashCode;
 }
 
 class RoomModel {
-  final String roomName;
-  final String roomId;
-  final List<ActiveUser> activeUsers;
-  final String password;
-  final String message;
-  final bool success;
+  final String? roomName;
+  final String? roomId;
+  final List<ActiveUser>? activeUsers;
+  final String? password;
+  final String? message;
+  final bool? success;
   final String? code;
 
   RoomModel({
@@ -95,7 +96,7 @@ class RoomModel {
     return <String, dynamic>{
       'roomName': roomName,
       'roomId': roomId,
-      'activeUsers': activeUsers.map((x) => x.toMap()).toList(),
+      'activeUsers': activeUsers?.map((x) => x.toMap()).toList(),
       'password': password,
       'message': message,
       'success': success,
@@ -105,17 +106,27 @@ class RoomModel {
 
   // Corrected `fromMap` constructor
   factory RoomModel.fromMap(Map<String, dynamic> map) {
+    // try {
     return RoomModel(
-      roomName: map['roomName'] as String,
-      roomId: map['roomId'] as String,
-      activeUsers: (map['activeUsers'] as List<dynamic>)
-          .map((user) => ActiveUser.fromMap(user as Map<String, dynamic>))
-          .toList(),
-      password: map['password'] as String,
-      message: map['message'] as String,
-      success: map['success'] as bool,
+      roomName: map['roomName'] as String?,
+      roomId: map['roomId'] as String?,
+      activeUsers: map['activeUsers'] != null
+          ? List<ActiveUser>.from(
+              (map['activeUsers'] as List<dynamic>).map<ActiveUser>(
+                (x) => ActiveUser.fromMap(x as Map<String, dynamic>),
+              ),
+            )
+          : null,
+      password: map['password'] as String?,
+      message: map['message'] as String?,
+      success: map['success'] as bool?,
       code: map['code'] as String?,
     );
+    // } catch (e, stackTrace) {
+    //   print('Error in fromMap: $e');
+    //   print(stackTrace);
+    //   rethrow;
+    // }
   }
 
   String toJson() => json.encode(toMap());

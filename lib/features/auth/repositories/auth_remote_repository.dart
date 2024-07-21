@@ -9,6 +9,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:vpn_apk/core/failure/app_failure.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:vpn_apk/core/models/room_model.dart';
+import 'package:vpn_apk/core/models/user_model.dart';
 part 'auth_remote_repository.g.dart';
 
 @riverpod
@@ -22,6 +23,7 @@ class AuthRemoteRepository {
   late io.Socket socket;
   final _afterJoinStreamController = StreamController<ActiveUser>.broadcast();
   final _afterDisconnetStreamController = StreamController<String>.broadcast();
+  final _onCodeChangeStreamController = StreamController<String>.broadcast();
 
   // Static instance for singleton pattern
   static final AuthRemoteRepository _instance =
@@ -36,6 +38,7 @@ class AuthRemoteRepository {
   void closeSocketConnection() {
     _afterJoinStreamController.close();
     _afterDisconnetStreamController.close();
+    _onCodeChangeStreamController.close();
     socket.disconnect();
     socket.onDisconnect(
       (data) {
@@ -68,10 +71,15 @@ class AuthRemoteRepository {
   Future<Either<AppFailure, RoomModel>> createRoom({
     required String roomName,
     required String password,
+    UserModel? userModel,
   }) async {
     final completer = Completer<Either<AppFailure, RoomModel>>();
     try {
-      socket.emit("createRoom", {"roomName": roomName, "password": password});
+      socket.emit("createRoom", {
+        "roomName": roomName,
+        "password": password,
+        "userModel": userModel,
+      });
 
       socket.on("roomCreated", (data) {
         debugPrint(data.toString());
@@ -100,10 +108,15 @@ class AuthRemoteRepository {
   Future<Either<AppFailure, RoomModel>> joinRoom({
     required String roomId,
     required String password,
+    UserModel? userModel,
   }) async {
     final completer = Completer<Either<AppFailure, RoomModel>>();
     try {
-      socket.emit("joinRoom", {"roomId": roomId, "password": password});
+      socket.emit("joinRoom", {
+        "roomId": roomId,
+        "password": password,
+        "userModel": userModel,
+      });
       socket.on("onJoinRoom", (data) {
         debugPrint(data.toString());
         if (!completer.isCompleted) {
@@ -133,7 +146,7 @@ class AuthRemoteRepository {
 
   Future<void> onDisconnectUser() async {
     socket.on("disconnected", (data) {
-      debugPrint("User discooneceted: ${data.toString()}");
+      debugPrint("User disconnected: ${data.toString()}");
       _afterDisconnetStreamController.add(data.toString());
     });
   }
@@ -143,15 +156,18 @@ class AuthRemoteRepository {
   Future<void> afterJoinRoom() async {
     socket.on("afterJoin", (data) {
       ActiveUser newUser = ActiveUser.fromMap(data["activeUser"]);
-      debugPrint(newUser.toString());
+      debugPrint("New user joined room: ${newUser.toString()}");
       _afterJoinStreamController.add(newUser);
     });
   }
 
-  Future<void> onCodeChange(WidgetRef ref) async {
+  Stream<String> get onCodeChangeStream => _onCodeChangeStreamController.stream;
+
+  Future<void> onCodeChange() async {
     socket.on("codeChange", (data) {
       debugPrint(data.toString());
-      ref.read(codeStateProvider.notifier).state = data["code"].toString();
+      _onCodeChangeStreamController.add(data.toString());
+      // ref.read(codeStateProvider.notifier).state = data["code"].toString();
     });
   }
 

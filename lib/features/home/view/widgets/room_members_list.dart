@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vpn_apk/core/constants/text_styles.dart';
 import 'package:vpn_apk/core/providers/room_model_notifier.dart';
 import 'package:vpn_apk/core/theme/app_pallate.dart';
+import 'package:vpn_apk/core/utils/image_utils.dart';
 import 'package:vpn_apk/core/view/components/custom_text_widget.dart';
 
 class RoomMembersList extends ConsumerWidget {
@@ -22,7 +23,7 @@ class RoomMembersList extends ConsumerWidget {
       child: Column(
         children: [
           CustomTextWidget(
-            text: roomModel!.roomName.toUpperCase(),
+            text: roomModel!.roomName!.toUpperCase(),
             color: Pallate.lightPurpleColor,
             fontSize: FontSize.semiLarge,
             fontFamily: "Montserrat Bold",
@@ -40,13 +41,14 @@ class RoomMembersList extends ConsumerWidget {
           ),
           Flexible(
             child: ListView.builder(
-              itemCount: roomModel.activeUsers.length,
+              itemCount: roomModel.activeUsers!.length,
               scrollDirection: Axis.vertical,
               physics: const BouncingScrollPhysics(),
               itemBuilder: (context, index) {
-                final roomUser = roomModel.activeUsers[index];
+                final roomUser = roomModel.activeUsers![index];
+                final userModel = roomUser.userModel;
                 return Tooltip(
-                  message: "${roomUser.username}: ${roomUser.id}",
+                  message: "${roomUser.userModel!.username}",
                   child: Container(
                     height: 60,
                     width: 50,
@@ -59,16 +61,26 @@ class RoomMembersList extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Row(
                         children: [
-                          const Icon(
-                            Icons.account_circle_outlined,
-                            size: 35,
-                          ),
+                          if (userModel != null && userModel.image != null)
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundImage: MemoryImage(
+                                ImageUtils.decodeImage(
+                                  userModel.image!,
+                                )!,
+                              ),
+                            ),
+                          if (!(userModel != null && userModel.image != null))
+                            const Icon(
+                              Icons.account_circle_outlined,
+                              size: 35,
+                            ),
                           const SizedBox(
                             width: 10,
                           ),
                           Flexible(
                             child: CustomTextWidget(
-                              text: "${roomUser.username}: ${roomUser.id}",
+                              text: "${roomUser.userModel!.username}",
                               textOverflow: TextOverflow.ellipsis,
                               fontSize: FontSize.semiMedium,
                             ),
@@ -89,7 +101,7 @@ class RoomMembersList extends ConsumerWidget {
             height: 10,
           ),
           CustomTextWidget(
-            text: "Total Room Member: ${roomModel.activeUsers.length}",
+            text: "Total Room Member: ${roomModel.activeUsers!.length}",
             color: Pallate.textFadeColor,
             fontSize: FontSize.semiMedium,
           ),

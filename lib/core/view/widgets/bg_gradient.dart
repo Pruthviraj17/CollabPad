@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:vpn_apk/core/theme/app_pallate.dart';
 
 class BgGradientWidget extends StatelessWidget {

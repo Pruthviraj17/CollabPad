@@ -1,8 +1,19 @@
 class User {
-  constructor(username, id) {
-    this.username = username;
+  constructor(userModel, id) {
+    this.userModel = userModel;
     this.id = id;
   }
 }
 
-module.exports = User;
+class UserModel {
+  constructor(username, email, image) {
+    this.username = username;
+    this.email = email;
+    this.image = image;
+  }
+}
+
+module.exports = {
+  User,
+  UserModel,
+};
