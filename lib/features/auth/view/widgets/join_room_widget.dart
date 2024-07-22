@@ -30,6 +30,13 @@ class _LoginFormWidgetState extends ConsumerState<JoinRoomWidget> {
   final formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // ref.read(authViewmodelProvider.notifier).removeUser();
+  }
+
+  @override
   void dispose() {
     _roomIdController.dispose();
     _roomPassController.dispose();

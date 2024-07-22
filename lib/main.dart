@@ -1,9 +1,7 @@
 import 'package:collabpad/core/models/user_model.dart';
 import 'package:collabpad/core/providers/user_model_notifier.dart';
 import 'package:collabpad/core/theme/theme.dart';
-import 'package:collabpad/features/auth/view/pages/auth_page.dart';
 import 'package:collabpad/features/auth/view/pages/flash_screen_page.dart';
-import 'package:collabpad/features/auth/view/pages/get_started_page.dart';
 import 'package:collabpad/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:collabpad/features/auth/viewmodel/color_pallate_notifier.dart';
 import 'package:flutter/material.dart';

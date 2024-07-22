@@ -9,7 +9,6 @@ import 'package:collabpad/features/auth/utils/show_color_picker_dialogue.dart';
 import 'package:collabpad/features/auth/view/pages/auth_page.dart';
 import 'package:collabpad/features/home/utils/show_room_details.dart';
 import 'package:collabpad/features/home/utils/show_user_details.dart';
-import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

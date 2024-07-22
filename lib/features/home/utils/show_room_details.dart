@@ -127,6 +127,7 @@ Widget roomDetailsTile({
           ),
         ],
       ),
+      const Spacer(),
       const SizedBox(
         width: 30,
       ),
