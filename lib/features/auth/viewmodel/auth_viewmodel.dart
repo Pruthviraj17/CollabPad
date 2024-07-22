@@ -1,4 +1,5 @@
 import 'package:collabpad/core/models/user_model.dart';
+import 'package:collabpad/core/providers/user_model_notifier.dart';
 import 'package:collabpad/features/auth/repositories/auth_local_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -24,6 +25,14 @@ class AuthViewmodel extends _$AuthViewmodel {
 
   Future<UserModel?> getUser() async {
     return await _authLocalRepository.getUserInfo();
+  }
+
+  Future<bool> removeUser() async {
+    bool sucess = await _authLocalRepository.removeUser();
+    if (sucess) {
+      ref.read(userModelNotifierProvider.notifier).removeuser();
+    }
+    return sucess;
   }
 
   bool setThemeColor(Color color) {

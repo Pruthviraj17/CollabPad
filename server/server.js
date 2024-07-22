@@ -24,8 +24,10 @@ io.on("connection", (socket) => {
 
     if (userModel === null) {
       userModel = new User.UserModel("Admin", null, null);
-    } else if (userModel.username === null) {
-      userModel.username = "Admin";
+    }
+
+    if (userModel.image === "null") {
+      userModel.image = null;
     }
 
     const user = new User.User(userModel, socket.id);
@@ -64,8 +66,10 @@ io.on("connection", (socket) => {
             null,
             null
           );
-        } else if (userModel.username === null) {
-          userModel.username = `Guest ${activeRooms[roomId].users.length}`;
+        }
+
+        if (userModel.image === "null") {
+          userModel.image = null;
         }
 
         const user = new User.User(userModel, socket.id);

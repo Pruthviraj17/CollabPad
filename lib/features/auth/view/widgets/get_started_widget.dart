@@ -18,9 +18,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class GetStartedWidget extends ConsumerStatefulWidget {
   const GetStartedWidget({
     super.key,
-    this.onUpdatePopScreen,
+    this.onUpdatePopScreen = false,
   });
-  final bool? onUpdatePopScreen;
+  final bool onUpdatePopScreen;
 
   @override
   ConsumerState<GetStartedWidget> createState() => _GetStartedWidgetState();
@@ -40,21 +40,24 @@ class _GetStartedWidgetState extends ConsumerState<GetStartedWidget> {
   Future<void> _update(
     WidgetRef ref,
   ) async {
-    String? selectedImage = await ImageUtils.encodeImage(_imageBytes);
+    String? selectedImage;
+    if (_imageBytes != null) {
+      selectedImage = await ImageUtils.encodeImage(_imageBytes);
+    }
 
     UserModel userModel = UserModel(
       username: _userNameController.text,
       email: _userEmailController.text,
-      image: selectedImage,
+      image: selectedImage ?? "null",
     );
 
-    await ref.read(authViewmodelProvider.notifier).init();
+    // await ref.read(authViewmodelProvider.notifier).init();
     bool success =
         ref.read(authViewmodelProvider.notifier).setUser(userInfo: userModel);
     if (success) {
       ref.read(userModelNotifierProvider.notifier).addUser(userModel);
 
-      if (widget.onUpdatePopScreen != null && widget.onUpdatePopScreen!) {
+      if (widget.onUpdatePopScreen) {
         Navigator.of(context).pop();
         showSnackBar(context: context, content: "User Info Updated");
         return;
@@ -87,8 +90,11 @@ class _GetStartedWidgetState extends ConsumerState<GetStartedWidget> {
   @override
   Widget build(BuildContext context) {
     UserModel? userModel = ref.watch(userModelNotifierProvider);
-    if (userModel != null) {
-      _imageBytes = ImageUtils.decodeImage(userModel.image!);
+
+    if (_imageBytes == null && userModel != null) {
+      _imageBytes = (userModel.image != "null")
+          ? ImageUtils.decodeImage(userModel.image!)
+          : null;
       _userNameController.text = userModel.username!;
       _userEmailController.text = userModel.email!;
     }
@@ -102,12 +108,9 @@ class _GetStartedWidgetState extends ConsumerState<GetStartedWidget> {
             children: [
               InkWell(
                 onTap: () async {
-                  Uint8List? pickedBytes = await pickImageWeb();
-                  setState(() {
-                    if (pickedBytes != null) {
-                      _imageBytes = pickedBytes;
-                    }
-                  });
+                  _imageBytes = await pickImageWeb();
+
+                  setState(() {});
                 },
                 splashColor: Pallate.transparentColor,
                 child: CircleAvatar(
@@ -166,6 +169,39 @@ class _GetStartedWidgetState extends ConsumerState<GetStartedWidget> {
                   );
                 },
               ),
+              if (widget.onUpdatePopScreen)
+                const SizedBox(
+                  height: 31,
+                ),
+              if (widget.onUpdatePopScreen)
+                TextButton(
+                  onPressed: () async {
+                    if (userModel == null) {
+                      showSnackBar(
+                          context: context,
+                          content: "User detail's does not exist");
+                      return;
+                    }
+                    bool success = await ref
+                        .read(authViewmodelProvider.notifier)
+                        .removeUser();
+
+                    if (success) {
+                      _imageBytes = null;
+                      _userNameController.text = "";
+                      _userEmailController.text = "";
+                      showSnackBar(
+                          context: context,
+                          content: "User detail's removed successfully");
+                    }
+                  },
+                  child: const CustomTextWidget(
+                    text: "Don't want to store user detail's ? Remove",
+                    fontWeight: FontWeights.thinWeight,
+                    fontSize: FontSize.semiMedium,
+                    color: Pallate.textFadeColor,
+                  ),
+                ),
               const SizedBox(
                 height: 21,
               ),

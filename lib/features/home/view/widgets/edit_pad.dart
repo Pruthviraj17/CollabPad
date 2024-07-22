@@ -16,9 +16,8 @@ class EditPad extends ConsumerStatefulWidget {
   ConsumerState<EditPad> createState() => _EditPadState();
 }
 
-final _codeFieldController = CodeController();
-
 class _EditPadState extends ConsumerState<EditPad> {
+  final _codeFieldController = CodeController();
   @override
   void initState() {
     _codeFieldController.popupController.enabled = false;

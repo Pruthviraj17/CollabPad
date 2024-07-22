@@ -65,6 +65,17 @@ Future<void> showRoomDetails(BuildContext context, RoomModel roomModel) async {
                     title: "Room Password",
                     desc: roomModel.password!,
                     iconData: Icons.lock_outline_rounded,
+                    trailingWidget: IconButton(
+                      onPressed: () =>
+                          _copyTextToClipboard(context, roomModel.password!),
+                      icon: const Tooltip(
+                        message: "Copy password",
+                        child: Icon(
+                          Icons.copy_rounded,
+                          color: Pallate.whiteColor,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -116,7 +127,9 @@ Widget roomDetailsTile({
           ),
         ],
       ),
-      const Spacer(),
+      const SizedBox(
+        width: 30,
+      ),
       if (trailingWidget != null) trailingWidget
     ],
   );

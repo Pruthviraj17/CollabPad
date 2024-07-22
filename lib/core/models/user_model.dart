@@ -14,7 +14,7 @@ class UserModel {
   Map<String, dynamic> toJson() => {
         'username': username,
         'email': email,
-        'image': image,
+        'image': image ?? "",
       };
 
   factory UserModel.fromJson(Map<String, dynamic> json) {

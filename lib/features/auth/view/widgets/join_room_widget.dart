@@ -30,11 +30,6 @@ class _LoginFormWidgetState extends ConsumerState<JoinRoomWidget> {
   final formKey = GlobalKey<FormState>();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     _roomIdController.dispose();
     _roomPassController.dispose();
@@ -44,6 +39,7 @@ class _LoginFormWidgetState extends ConsumerState<JoinRoomWidget> {
   void joinRoom() async {
     UserModel? userModel =
         await ref.read(authViewmodelProvider.notifier).getUser();
+    await ref.read(authRemoteRepositoryProvider).connectSocket();
     final res = await ref.read(authRemoteRepositoryProvider).joinRoom(
           roomId: _roomIdController.text,
           password: _roomPassController.text,

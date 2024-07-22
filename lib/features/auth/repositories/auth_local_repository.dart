@@ -22,9 +22,14 @@ class AuthLocalRepository {
     if (userInfo != null) {
       final userInfoJson = jsonEncode(userInfo.toJson());
       _sharedPreferences.setString("user_info", userInfoJson);
+
       return true;
     }
     return false;
+  }
+
+  Future<bool> removeUser() async {
+    return await _sharedPreferences.remove("user_info");
   }
 
   Future<UserModel?> getUserInfo() async {
@@ -47,8 +52,8 @@ class AuthLocalRepository {
     return true;
   }
 
-  Future<Color?> getThemeColor() async{
-      final prefs = await SharedPreferences.getInstance();
+  Future<Color?> getThemeColor() async {
+    final prefs = await SharedPreferences.getInstance();
     String? hexCode = prefs.getString("theme_color");
     if (hexCode != null) {
       return hexToColor(hexCode);

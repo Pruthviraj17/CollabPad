@@ -62,7 +62,7 @@ class RoomMembersList extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Row(
                         children: [
-                          if (userModel != null && userModel.image != null)
+                          if (userModel != null && userModel.image != null )
                             CircleAvatar(
                               radius: 20,
                               backgroundImage: MemoryImage(

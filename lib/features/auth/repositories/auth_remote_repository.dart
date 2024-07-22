@@ -6,7 +6,6 @@ import 'package:collabpad/core/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
@@ -18,13 +17,11 @@ AuthRemoteRepository authRemoteRepository(AuthRemoteRepositoryRef ref) {
   return AuthRemoteRepository();
 }
 
-final codeStateProvider = StateProvider<String>((ref) => '//write here');
-
 class AuthRemoteRepository {
   late io.Socket socket;
-  final _afterJoinStreamController = StreamController<ActiveUser>.broadcast();
-  final _afterDisconnetStreamController = StreamController<String>.broadcast();
-  final onCodeChangeStreamController = StreamController<String>.broadcast();
+  late StreamController<ActiveUser> _afterJoinStreamController;
+  late StreamController<String> _afterDisconnetStreamController;
+  late StreamController<String> onCodeChangeStreamController;
 
   // Static instance for singleton pattern
   static final AuthRemoteRepository _instance =
@@ -33,14 +30,13 @@ class AuthRemoteRepository {
   // Private constructor
   AuthRemoteRepository._internal() {
     // Initialize the socket connection here if needed
-    _connectSocket();
+    // _connectSocket();
   }
 
   void closeSocketConnection() {
     _afterJoinStreamController.close();
     _afterDisconnetStreamController.close();
     onCodeChangeStreamController.close();
-    socket.disconnect();
     socket.onDisconnect(
       (data) {
         debugPrint("socketDisconnected");
@@ -54,7 +50,11 @@ class AuthRemoteRepository {
     return _instance;
   }
 
-  Future<void> _connectSocket() async {
+  Future<void> connectSocket() async {
+    _afterJoinStreamController = StreamController<ActiveUser>.broadcast();
+    _afterDisconnetStreamController = StreamController<String>.broadcast();
+    onCodeChangeStreamController = StreamController<String>.broadcast();
+
     String base = dotenv.get("BASE");
     socket = io.io(base, <String, dynamic>{
       'transports': ['websocket'],
@@ -81,7 +81,6 @@ class AuthRemoteRepository {
         "password": password,
         "userModel": userModel,
       });
-
       socket.on("roomCreated", (data) {
         debugPrint(data.toString());
         if (!completer.isCompleted) {

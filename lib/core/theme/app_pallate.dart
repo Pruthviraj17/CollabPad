@@ -2,9 +2,6 @@
 import 'package:flutter/material.dart';
 
 class Pallate {
-  static Color backGrounfGradient1 = const Color(0xFF0D1441);
-  static Color backGrounfGradient2 = const Color(0xFF283584);
-  static Color backGrounfGradient3 = const Color(0xFF376AB2);
   Color selectedBackGrounfGradient1;
   Color selectedBackGrounfGradient2;
   Color selectedBackGrounfGradient3;
@@ -15,8 +12,8 @@ class Pallate {
     this.selectedBackGrounfGradient3 = const Color(0xFF376AB2),
   });
 
+  static Color backGrounfGradient2 = const Color(0xFF283584);
   static const Color buttonBgColor = Color(0xff4759C5);
-
   static const Color lightPurpleColor = Color(0xff899AFF);
   static const Color textFadeColor = Color.fromARGB(127, 255, 255, 255);
   static const Color whiteColor = Colors.white;

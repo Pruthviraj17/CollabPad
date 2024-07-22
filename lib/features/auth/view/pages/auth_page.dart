@@ -9,7 +9,6 @@ import 'package:collabpad/features/auth/utils/show_color_picker_dialogue.dart';
 import 'package:collabpad/features/auth/view/widgets/create_room_widget.dart';
 import 'package:collabpad/features/auth/view/widgets/join_room_widget.dart';
 import 'package:collabpad/features/auth/viewmodel/watch_auth_screen.dart';
-import 'package:collabpad/features/home/utils/show_user_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
@@ -46,8 +45,8 @@ class AuthPage extends ConsumerWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const CustomTextWidget(
-                            text: "Hello ",
+                          CustomTextWidget(
+                            text: " ${userModel != null ? "Hello" : ""} ",
                             fontSize: FontSize.large,
                             color: Pallate.lightPurpleColor,
                             fontWeight: FontWeights.hardBoldWeight,
@@ -55,7 +54,7 @@ class AuthPage extends ConsumerWidget {
                           ),
                           CustomTextWidget(
                             text:
-                                "${userModel != null ? userModel.username : "User"} !",
+                                "${userModel != null ? userModel.username : "Welcome to CollabPAD"} !",
                             fontSize: FontSize.semiLarge,
                             color: Pallate.whiteColor,
                             fontWeight: FontWeights.hardBoldWeight,
@@ -132,7 +131,8 @@ class AuthPage extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 20, top: 5),
                     child: TextButton(
-                      onPressed: () => showCustomColorPicker(context: context,ref: ref),
+                      onPressed: () =>
+                          showCustomColorPicker(context: context, ref: ref),
                       child: const CustomTextWidget(
                         text: "Change Theme Color ?",
                         fontWeight: FontWeights.thinWeight,

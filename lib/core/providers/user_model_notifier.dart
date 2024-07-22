@@ -12,6 +12,11 @@ class UserModelNotifier extends _$UserModelNotifier {
 
   void addUser(UserModel userModel) {
     state = userModel;
+  
+  }
+
+  void removeuser() {
+    state = null;
   }
   
   UserModel? getUser() {

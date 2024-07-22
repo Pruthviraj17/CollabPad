@@ -2,6 +2,7 @@ import 'package:collabpad/core/constants/text_styles.dart';
 import 'package:collabpad/core/models/room_model.dart';
 import 'package:collabpad/core/models/user_model.dart';
 import 'package:collabpad/core/providers/room_model_notifier.dart';
+import 'package:collabpad/core/providers/user_model_notifier.dart';
 import 'package:collabpad/core/theme/app_pallate.dart';
 import 'package:collabpad/core/utils/show_custom_snackbar.dart';
 import 'package:collabpad/core/view/animations/page_navigation_animation.dart';
@@ -9,7 +10,6 @@ import 'package:collabpad/core/view/components/custom_text_form_field.dart';
 import 'package:collabpad/core/view/components/custom_text_widget.dart';
 import 'package:collabpad/features/auth/repositories/auth_remote_repository.dart';
 import 'package:collabpad/features/auth/view/widgets/auth_button.dart';
-import 'package:collabpad/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:collabpad/features/home/view/pages/dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -29,25 +29,20 @@ class _RegisterFormWidgetState extends ConsumerState<CreateRoomWidget> {
   final formKey = GlobalKey<FormState>();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     _roomNameController.dispose();
     _roomPassController.dispose();
     super.dispose();
   }
 
-  Future<void> createRoom() async {
-    UserModel? userModel =
-        await ref.read(authViewmodelProvider.notifier).getUser();
+  Future<void> createRoom(UserModel? userModel) async {
+    await ref.read(authRemoteRepositoryProvider).connectSocket();
     final res = await ref.read(authRemoteRepositoryProvider).createRoom(
           roomName: _roomNameController.text,
           password: _roomPassController.text,
           userModel: userModel,
         );
+
     if (mounted) {
       final val = switch (res) {
         Left(value: final l) => _showMessage(context, l.message),
@@ -75,6 +70,8 @@ class _RegisterFormWidgetState extends ConsumerState<CreateRoomWidget> {
 
   @override
   Widget build(BuildContext context) {
+    UserModel? userModel = ref.watch(userModelNotifierProvider);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 10),
       child: SingleChildScrollView(
@@ -108,9 +105,9 @@ class _RegisterFormWidgetState extends ConsumerState<CreateRoomWidget> {
                 height: 40,
               ),
               AuthButton(
-                onPressed: () {
+                onPressed: () async {
                   if (formKey.currentState!.validate()) {
-                    createRoom();
+                    await createRoom(userModel);
                   }
                 },
                 child: const CustomTextWidget(
