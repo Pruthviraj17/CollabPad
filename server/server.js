@@ -128,6 +128,15 @@ io.on("connection", (socket) => {
   });
 });
 
+app.get("/clearRooms", (req, res, next) => {
+  activeRooms = {};
+  res.send(
+    `<div style="text-align: center; margin-top: 20%; width: 100%; font-family: monospace;">
+    <h2>All active rooms have been cleared</h2>
+    </div>`
+  );
+});
+
 app.get("/", (req, res, next) => {
   res.send(
     `<div style="text-align: center; margin-top: 20%; width: 100%; font-family: monospace;">

@@ -35,4 +35,27 @@
   <body>
     <script src="flutter_bootstrap.js" async></script>
   </body>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyBO9VL52MTRsda3QJVwVbT1oQKJWlrh-k8",
+      authDomain: "ai-chat-app-e26c1.firebaseapp.com",
+      projectId: "ai-chat-app-e26c1",
+      storageBucket: "ai-chat-app-e26c1.appspot.com",
+      messagingSenderId: "668376513515",
+      appId: "1:668376513515:web:b7c0e9d1634b9c327bf7ae",
+      measurementId: "G-GN8JDJJG90",
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
 </html>
