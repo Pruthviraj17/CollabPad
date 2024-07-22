@@ -70,8 +70,6 @@ class _EditPadState extends ConsumerState<EditPad> {
                   textSelectionTheme: const TextSelectionThemeData(
                     selectionColor: Pallate.textFadeColor,
                   ),
-                  filledColor: Pallate.transparentColor,
-                  filled: true,
                   background: Pallate.transparentColor,
                   cursorColor: Pallate.textFadeColor,
                   textStyle: const TextStyle(
