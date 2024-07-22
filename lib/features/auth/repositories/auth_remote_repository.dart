@@ -30,7 +30,6 @@ class AuthRemoteRepository {
   // Private constructor
   AuthRemoteRepository._internal() {
     // Initialize the socket connection here if needed
-    // _connectSocket();
   }
 
   void closeSocketConnection() {
