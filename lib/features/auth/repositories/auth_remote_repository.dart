@@ -89,7 +89,7 @@ class AuthRemoteRepository {
       });
 
       // Add a timeout to handle cases where the server doesn't respond
-      Future.delayed(const Duration(seconds: 10), () {
+      Future.delayed(const Duration(seconds: 20), () {
         if (!completer.isCompleted) {
           completer.complete(
               Left(AppFailure("Timeout exceed! failed to created the room")));
@@ -125,7 +125,7 @@ class AuthRemoteRepository {
       });
 
       // Add a timeout to handle cases where the server doesn't respond
-      Future.delayed(const Duration(seconds: 10), () {
+      Future.delayed(const Duration(seconds: 20), () {
         if (!completer.isCompleted) {
           completer.complete(
               Left(AppFailure("Timeout exceed! failed to join the room")));

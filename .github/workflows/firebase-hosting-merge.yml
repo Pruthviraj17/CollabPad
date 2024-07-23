@@ -16,9 +16,15 @@ jobs:
       #     distribution: "oracle"
       #     java-version: "17"
       - uses: subosito/flutter-action@v1
+      # Create the .env file using GitHub Secrets
       - name: Create .env file
         run: |
-          echo "BASE=${{ secrets.BASE }}" > .env
+          mkdir -p .env
+          echo "BASE=${{ secrets.BASE }}" > .env/.env
+          # Add other environment variables similarly
+        env:
+          BASE: ${{ secrets.BASE }}
+          # Define other secrets here
       #   Add other environment variables similarly, accessing them from secrets
       - name: "Run flutter pub get"
         run: flutter pub get
