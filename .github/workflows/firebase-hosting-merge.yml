@@ -22,7 +22,7 @@ jobs:
       #   Add other environment variables similarly, accessing them from secrets
       - name: Merge to branch
         run: |
-          git checkout dev
+          git checkout main
       - name: Print .env file
         run: cat .env
 
