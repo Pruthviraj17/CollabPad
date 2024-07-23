@@ -54,8 +54,8 @@ class AuthRemoteRepository {
     _afterDisconnetStreamController = StreamController<String>.broadcast();
     onCodeChangeStreamController = StreamController<String>.broadcast();
 
-    // String base = dotenv.get("BASE");
-    socket = io.io("base", <String, dynamic>{
+    String base = dotenv.get("BASE");
+    socket = io.io(base, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
     });
