@@ -31,7 +31,6 @@ class _LoginFormWidgetState extends ConsumerState<JoinRoomWidget> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     // ref.read(authViewmodelProvider.notifier).removeUser();
   }
