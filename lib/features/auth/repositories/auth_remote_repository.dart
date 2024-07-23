@@ -5,7 +5,6 @@ import 'package:collabpad/core/models/room_model.dart';
 import 'package:collabpad/core/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
@@ -54,7 +53,8 @@ class AuthRemoteRepository {
     _afterDisconnetStreamController = StreamController<String>.broadcast();
     onCodeChangeStreamController = StreamController<String>.broadcast();
 
-    String base = dotenv.get("BASE");
+    String base = "https://collabpad.onrender.com";
+    // dotenv.get("BASE");
     socket = io.io(base, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,

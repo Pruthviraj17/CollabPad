@@ -1,7 +1,12 @@
+import 'dart:async';
+
+import 'package:collabpad/core/models/room_model.dart';
 import 'package:collabpad/core/models/user_model.dart';
 import 'package:collabpad/core/providers/user_model_notifier.dart';
 import 'package:collabpad/features/auth/repositories/auth_local_repository.dart';
+import 'package:collabpad/features/auth/repositories/auth_remote_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_viewmodel.g.dart';
@@ -9,14 +14,53 @@ part 'auth_viewmodel.g.dart';
 @riverpod
 class AuthViewmodel extends _$AuthViewmodel {
   late AuthLocalRepository _authLocalRepository;
+  late AuthRemoteRepository _authRemoteRepository;
+
   @override
-  AsyncValue<String>? build() {
+  AsyncValue<RoomModel>? build() {
     _authLocalRepository = ref.watch(authLocalRepositoryProvider);
+    _authRemoteRepository = ref.watch(authRemoteRepositoryProvider);
     return null;
   }
 
   Future<void> init() async {
     _authLocalRepository.init();
+  }
+
+  Future<void> createRoom({
+    required String roomName,
+    required String password,
+    UserModel? userModel,
+  }) async {
+
+    state = const AsyncValue.loading();
+    _authRemoteRepository.connectSocket();
+    final res = await _authRemoteRepository.createRoom(
+        roomName: roomName, password: password, userModel: userModel);
+    final val = switch (res) {
+      Left(value: final l) => state =
+          AsyncValue.error(l.message, StackTrace.current),
+      Right(value: final r) => state = AsyncValue.data(r),
+    };
+
+  }
+
+  Future<void> joinRoom({
+   required String roomId,
+    required String password,
+    UserModel? userModel,
+  }) async {
+
+    state = const AsyncValue.loading();
+    _authRemoteRepository.connectSocket();
+    final res = await _authRemoteRepository.joinRoom(
+        roomId: roomId, password: password, userModel: userModel);
+    final val = switch (res) {
+      Left(value: final l) => state =
+          AsyncValue.error(l.message, StackTrace.current),
+      Right(value: final r) => state = AsyncValue.data(r),
+    };
+    
   }
 
   bool setUser({UserModel? userInfo}) {

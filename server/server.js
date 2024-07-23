@@ -14,7 +14,7 @@ const User = require("./models/user");
 app.use(cors());
 app.use(express.json());
 
-const activeRooms = {};
+let activeRooms = {};
 
 // create room function
 io.on("connection", (socket) => {

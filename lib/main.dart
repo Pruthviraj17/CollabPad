@@ -5,12 +5,11 @@ import 'package:collabpad/features/auth/view/pages/flash_screen_page.dart';
 import 'package:collabpad/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:collabpad/features/auth/viewmodel/color_pallate_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+  // await dotenv.load(fileName: ".env");
   final container = ProviderContainer();
   await container.read(authViewmodelProvider.notifier).init();
   container.read(colorPallateNotifierProvider.notifier).init();
