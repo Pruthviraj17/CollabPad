@@ -18,7 +18,7 @@ jobs:
       - uses: subosito/flutter-action@v1
       - name: Create .env file
         run: |
-          echo "BASE=${{ secrets.BASE }}" > .env
+          echo "BASE=${{ vars.BASE }}" > .env
       #   Add other environment variables similarly, accessing them from secrets
       - name: "Run flutter pub get"
         run: flutter pub get
