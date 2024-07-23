@@ -54,6 +54,7 @@ class AuthRemoteRepository {
     onCodeChangeStreamController = StreamController<String>.broadcast();
 
     String base = "https://collabpad.onrender.com";
+    // String base = "http://127.0.0.1:3000";
     // dotenv.get("BASE");
     socket = io.io(base, <String, dynamic>{
       'transports': ['websocket'],
@@ -81,7 +82,7 @@ class AuthRemoteRepository {
         "userModel": userModel,
       });
       socket.on("roomCreated", (data) {
-        debugPrint(data.toString());
+        // debugPrint(data.toString());
         if (!completer.isCompleted) {
           afterJoinRoom();
           completer.complete(Right(RoomModel.fromMap(data)));
@@ -117,10 +118,15 @@ class AuthRemoteRepository {
         "userModel": userModel,
       });
       socket.on("onJoinRoom", (data) {
-        debugPrint(data.toString());
+        // debugPrint(data.toString());
         if (!completer.isCompleted) {
           afterJoinRoom();
-          completer.complete(Right(RoomModel.fromMap(data)));
+          bool success = data["success"];
+          if (success) {
+            completer.complete(Right(RoomModel.fromMap(data)));
+          } else {
+            completer.complete(Left(AppFailure(data["message"])));
+          }
         }
       });
 
