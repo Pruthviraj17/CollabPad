@@ -10,7 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load();
+  // await dotenv.load();
   final container = ProviderContainer();
   await container.read(authViewmodelProvider.notifier).init();
   container.read(colorPallateNotifierProvider.notifier).init();
